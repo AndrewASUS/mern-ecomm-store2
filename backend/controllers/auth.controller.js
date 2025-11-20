@@ -1,10 +1,6 @@
 import jwt from "jsonwebtoken"
-
 import { redis } from "../lib/redis.js"
 import User from "../models/user.model.js"
-
-
-
 
 // UTILITY FUNCTIONS UTILITY FUNCTIONS UTILITY FUNCTIONS UTILITY FUNCTIONS UTILITY FUNCTIONS UTILITY FUNCTIONS 
 const generateTokens = (userId) => {
@@ -18,9 +14,6 @@ const generateTokens = (userId) => {
 
   return { accessToken, refreshToken }
 }
-
-
-
 
 const setCookies = (res, accessToken, refreshToken) => {
   const isProd = process.env.NODE_ENV === "production";
@@ -38,18 +31,12 @@ const setCookies = (res, accessToken, refreshToken) => {
     sameSite: isProd ? "none" : "lax", 
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 Days
   });
-};
-
-
-
+}
 
 // Save the refresh token to the database
 const storeRefreshToken = async (userId, refreshToken) => {
   await redis.set(`refresh_token:${userId}`, refreshToken, "EX", 7 * 24 * 60 * 60) // 7 Days 7*24*60*60
 }
-
-
-
 
 // SIGNUP SIGNUP SIGNUP SIGNUP SIGNUP SIGNUP SIGNUP SIGNUP SIGNUP SIGNUP SIGNUP SIGNUP SIGNUP SIGNUP SIGNUP SIGNUP 
 export const signup = async (req, res) => {
@@ -69,7 +56,6 @@ export const signup = async (req, res) => {
 
     setCookies(res, accessToken, refreshToken)
 
-
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -81,9 +67,6 @@ export const signup = async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 }
-
-
-
 
 // LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN 
 export const login = async (req, res) => {
@@ -109,9 +92,6 @@ export const login = async (req, res) => {
   }
 }
 
-
-
-
 // LOGOUT LOGOUT LOGOUT LOGOUT LOGOUT LOGOUT LOGOUT LOGOUT LOGOUT LOGOUT LOGOUT LOGOUT LOGOUT LOGOUT LOGOUT LOGOUT LOGOUT 
 export const logout = async (req, res) => {
   try {
@@ -129,9 +109,6 @@ export const logout = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message })
   }
 }
-
-
-
 
 // REFRESH TOKEN REFRESH TOKEN REFRESH TOKEN REFRESH TOKEN REFRESH TOKEN REFRESH TOKEN REFRESH TOKEN REFRESH TOKEN 
 export const refreshToken = async (req, res) => {
@@ -151,10 +128,12 @@ export const refreshToken = async (req, res) => {
 
     const accessToken = jwt.sign({ userId: decoded.userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" })
 
+    const isProd = process.env.NODE_ENV === "production";
+
     res.cookie("accessToken", accessToken, {
       httpOnly: true, // Prevents XXS attacks "CROSS SITE SCRIPTING ATTACKS"
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict", // Prevents CSRF attacks "CROSS SITE REQUEST FORGERY"
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax", // <-- fixed to match login cookies
       maxAge: 15 * 60 * 1000 // 15 Minutes
     })
 
@@ -164,9 +143,6 @@ export const refreshToken = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message })
   }
 }
-
-
-
 
 // READ PROFILE READ PROFILE READ PROFILE READ PROFILE READ PROFILE READ PROFILE READ PROFILE READ PROFILE READ PROFILE 
 export const getProfile = async (req, res) => {

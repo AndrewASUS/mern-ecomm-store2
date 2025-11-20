@@ -1,9 +1,12 @@
-import { useEffect } from "react"
+import { useEffect } from "react";
+import toast from "react-hot-toast";
 
+import CategoryItem from "../components/CategoryItem";
+import { useProductStore } from "../stores/useProductStore";
+import { useUserStore } from "../stores/useUserStore";
+import { useCartStore } from "../stores/useCartStore";
+import FeaturedProducts from "../components/FeaturedProducts";
 
-import CategoryItem from "../components/CategoryItem"
-import { useProductStore } from "../stores/useProductStore"
-import FeaturedProducts from "../components/FeaturedProducts"
 
 
 const categories = [
@@ -13,22 +16,30 @@ const categories = [
   { href: "/Glasses", name: "Glasses", imageUrl: "/glasses.jpg" },
   { href: "/Jackets", name: "Jackets", imageUrl: "/jackets.jpg" },
   { href: "/Suits", name: "Suits", imageUrl: "/suits.jpg" },
-  { href: "/Bags", name: "Bags", imageUrl: "/bags.jpg" }
-]
+  { href: "/Bags", name: "Bags", imageUrl: "/bags.jpg" },
+];
 
+const HomePage = ({ product }) => {
+  const { fetchFeaturedProducts, products, isLoading } = useProductStore();
+  const { user } = useUserStore();
+  const { addToCart } = useCartStore();
 
-const HomePage = () => {
-
-  const { fetchFeaturedProducts, products, isLoading } = useProductStore()
-
+  const handleAddToCart = () => {
+    if (!user) {
+      toast.error("Please login to add products to your cart", { id: "login" });
+      return;
+    } else {
+      // Add to cart
+      addToCart(product);
+    }
+  };
 
   useEffect(() => {
-    fetchFeaturedProducts()
-  }, [fetchFeaturedProducts])
-
+    fetchFeaturedProducts();
+  }, [fetchFeaturedProducts]);
 
   return (
-    <div className='relative min-h-screen text-white overflow-hidden'>
+    <div className="relative min-h-screen text-white overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h1 className="text-center text-5xl sm:text-6xl font-bold text-emerald-400 mb-4">
           Explore Our Categories
@@ -37,19 +48,17 @@ const HomePage = () => {
           Discover the latest trends and fashion
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categories.map((category => (
-            <CategoryItem
-              category={category}
-              key={category.name}
-             />
-          )))}
+          {categories.map((category) => (
+            <CategoryItem category={category} key={category.name} />
+          ))}
         </div>
 
-          {!isLoading && products.length > 0 && <FeaturedProducts featuredProducts={products} />}
-
+        {!isLoading && products.length > 0 && (
+          <FeaturedProducts featuredProducts={products} />
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;
