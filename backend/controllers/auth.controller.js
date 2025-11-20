@@ -23,20 +23,22 @@ const generateTokens = (userId) => {
 
 
 const setCookies = (res, accessToken, refreshToken) => {
+  const isProd = process.env.NODE_ENV === "production";
+
   res.cookie("accessToken", accessToken, {
     httpOnly: true, // Prevents XXS attacks "CROSS SITE SCRIPTING ATTACKS"
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict", // Prevents CSRF attacks "CROSS SITE REQUEST FORGERY"
-    maxAge: 15 * 60 * 1000 // 15 Minutes
-  })
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+    maxAge: 15 * 60 * 1000, // 15 Minutes
+  });
 
   res.cookie("refreshToken", refreshToken, {
-    httpOnly: true, // Prevents XXS attacks "CROSS SITE SCRIPTING ATTACKS"
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Prevents CSRF attacks "CROSS SITE REQUEST FORGERY"
-    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 Days
-  })
-}
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax", 
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 Days
+  });
+};
 
 
 
