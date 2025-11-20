@@ -33,7 +33,7 @@ const setCookies = (res, accessToken, refreshToken) => {
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true, // Prevents XXS attacks "CROSS SITE SCRIPTING ATTACKS"
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict", // Prevents CSRF attacks "CROSS SITE REQUEST FORGERY"
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Prevents CSRF attacks "CROSS SITE REQUEST FORGERY"
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 Days
   })
 }
