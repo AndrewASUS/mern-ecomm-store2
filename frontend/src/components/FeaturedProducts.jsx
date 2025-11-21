@@ -70,6 +70,7 @@ const FeaturedProducts = ({ featuredProducts }) => {
                         ${product.price.toFixed(2)}
                       </p>
                       <button
+                        // Add if no user logic to divide to login page
                         onClick={() => addToCart(product)}
                         className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 flex items-center justify-center"
                       >
