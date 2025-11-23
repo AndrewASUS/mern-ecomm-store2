@@ -13,7 +13,6 @@ const categories = [
   "Bags",
 ];
 
-// CREATE PRODUCT FORM USESTATE CREATE PRODUCT FORM USESTATE CREATE PRODUCT FORM USESTATE
 const CreateProductForm = () => {
   const [newProduct, setNewProduct] = useState({
     name: "",
@@ -25,10 +24,8 @@ const CreateProductForm = () => {
 
   const { createProduct, loading } = useProductStore();
 
-  // HANDLE SUBMIT HANDLE SUBMIT HANDLE SUBMIT HANDLE SUBMIT HANDLE SUBMIT HANDLE SUBMIT HANDLE SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       await createProduct(newProduct);
       setNewProduct({
@@ -39,14 +36,10 @@ const CreateProductForm = () => {
         image: "",
       });
     } catch {
-      console.log("Error creating product")
+      console.log("error creating a product");
     }
   };
 
-
-
-
-  // HANDLE IMAGE CHANGE HANDLE IMAGE CHANGE HANDLE IMAGE CHANGE HANDLE IMAGE CHANGE HANDLE IMAGE CHANGE
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -56,7 +49,7 @@ const CreateProductForm = () => {
         setNewProduct({ ...newProduct, image: reader.result });
       };
 
-      reader.readAsDataURL(file); // BASE 64
+      reader.readAsDataURL(file); // base64
     }
   };
 
@@ -70,6 +63,7 @@ const CreateProductForm = () => {
       <h2 className="text-2xl font-semibold mb-6 text-emerald-300">
         Create New Product
       </h2>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label
@@ -86,7 +80,9 @@ const CreateProductForm = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, name: e.target.value })
             }
-            className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2
+						 px-3 text-white focus:outline-none focus:ring-2
+						focus:ring-emerald-500 focus:border-emerald-500"
             required
           />
         </div>
@@ -132,6 +128,7 @@ const CreateProductForm = () => {
             className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm 
 						py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500
 						 focus:border-emerald-500"
+            required
           />
         </div>
 
@@ -149,7 +146,9 @@ const CreateProductForm = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, category: e.target.value })
             }
-            className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md
+						 shadow-sm py-2 px-3 text-white focus:outline-none 
+						 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
             required
           >
             <option value="">Select a category</option>
@@ -165,25 +164,27 @@ const CreateProductForm = () => {
           <input
             type="file"
             id="image"
-            onChange={handleImageChange}
             className="sr-only"
-            accept="image"
+            accept="image/*"
+            onChange={handleImageChange}
           />
           <label
             htmlFor="image"
-            className="cursor-pointer bg-gray-700 py-2 px-3 border border-gray-600 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-300 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 mt-2"
+            className="cursor-pointer bg-gray-700 py-2 px-3 border border-gray-600 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-300 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
           >
             <Upload className="h-5 w-5 inline-block mr-2" />
             Upload Image
           </label>
           {newProduct.image && (
-            <span className="ml-3 text-sm text-gray-400">Image uploaded</span>
+            <span className="ml-3 text-sm text-gray-400">Image uploaded </span>
           )}
         </div>
 
         <button
           type="submit"
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 mt-2"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md 
+					shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 
+					focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50"
           disabled={loading}
         >
           {loading ? (
@@ -205,5 +206,4 @@ const CreateProductForm = () => {
     </motion.div>
   );
 };
-
 export default CreateProductForm;

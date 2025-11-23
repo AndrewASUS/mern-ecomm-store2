@@ -13,7 +13,7 @@ const CategoryPage = () => {
     fetchProductsByCategory(category);
   }, [fetchProductsByCategory, category]);
 
-  console.log("products", products);
+  console.log("products:", products);
 
   return (
     <div className="min-h-screen">

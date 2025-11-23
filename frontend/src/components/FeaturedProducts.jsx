@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 
 import { useCartStore } from "../stores/useCartStore";
+import { useUserStore } from "../stores/useUserStore";
+import { toast } from "react-hot-toast";
 
 const FeaturedProducts = ({ featuredProducts }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
 
   const { addToCart } = useCartStore();
+  const { user } = useUserStore(); // 👈 get logged-in user
 
   useEffect(() => {
     const handleResize = () => {
@@ -22,16 +25,20 @@ const FeaturedProducts = ({ featuredProducts }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const nextSlide = () => {
-    setCurrentIndex((prevIndex) => prevIndex + 1);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prevIndex) => prevIndex - 1);
-  };
+  const nextSlide = () => setCurrentIndex((prev) => prev + 1);
+  const prevSlide = () => setCurrentIndex((prev) => prev - 1);
 
   const isStartisabled = currentIndex === 0;
   const isEndDisabled = currentIndex >= featuredProducts.length - itemsPerPage;
+
+  // addToCart handler if no user
+  const handleAddToCart = (product) => {
+    if (!user) {
+      toast.error("Please login to add products to your cart");
+      return;
+    }
+    addToCart(product);
+  };
 
   return (
     <div className="py-12">
@@ -69,9 +76,9 @@ const FeaturedProducts = ({ featuredProducts }) => {
                       <p className="text-emerald-300 font-medium mb-4">
                         ${product.price.toFixed(2)}
                       </p>
+
                       <button
-                        // Add if no user logic to divide to login page
-                        onClick={() => addToCart(product)}
+                        onClick={() => handleAddToCart(product)}
                         className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 flex items-center justify-center"
                       >
                         <ShoppingCart className="w-5 h-5 mr-2" />
@@ -83,23 +90,30 @@ const FeaturedProducts = ({ featuredProducts }) => {
               ))}
             </div>
           </div>
-            <button
-              onClick={prevSlide}
-              disabled={isStartisabled}
-              className={`absolute top-1/2 -left-4 transform -translate-y-1/2 p-2 rounded-full transition-colors duration-300 ${isStartisabled ? "bg-gray-400 cursor-not-allowed" : "bg-emerald-600 hover:bg-emerald-500" }`}
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
 
-            <button
-              onClick={nextSlide}
-              disabled={isEndDisabled}
-              className={`absolute top-1/2 -right-4 transform -translate-y-1/2 p-2 rounded-full transition-colors duration-300 ${isEndDisabled ? "bg-gray-400 cursor-not-allowed" : "bg-emerald-600 hover:bg-emerald-500" }`}
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
+          <button
+            onClick={prevSlide}
+            disabled={isStartisabled}
+            className={`absolute top-1/2 -left-4 transform -translate-y-1/2 p-2 rounded-full transition-colors duration-300 ${
+              isStartisabled
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-emerald-600 hover:bg-emerald-500"
+            }`}
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
 
-
+          <button
+            onClick={nextSlide}
+            disabled={isEndDisabled}
+            className={`absolute top-1/2 -right-4 transform -translate-y-1/2 p-2 rounded-full transition-colors duration-300 ${
+              isEndDisabled
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-emerald-600 hover:bg-emerald-500"
+            }`}
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
         </div>
       </div>
     </div>
