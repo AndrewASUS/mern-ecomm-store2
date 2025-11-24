@@ -44,8 +44,10 @@ const AdminPage = () => {
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
             >
-              <tab.icon className="hidden sm:inline mr-2 h-5 w-5" />
-              {tab.label}
+              <div className="flex items-center justify-center gap-2">
+                <tab.icon className="hidden sm:block h-5 w-5" />
+                <span>{tab.label}</span>
+              </div>
             </button>
           ))}
         </div>
