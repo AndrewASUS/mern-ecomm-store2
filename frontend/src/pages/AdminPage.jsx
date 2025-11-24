@@ -37,7 +37,7 @@ const AdminPage = () => {
           Admin Dashboard
         </motion.h1>
 
-        <div className="flex justify-center mb-8">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-8 w-full max-w-md mx-auto">
           {tabs.map((tab) => (
             <button
               key={tab.id}
